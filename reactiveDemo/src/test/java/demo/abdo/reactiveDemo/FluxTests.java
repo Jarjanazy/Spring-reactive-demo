@@ -22,4 +22,13 @@ public class FluxTests {
                 doOnError(System.out::println). // prints java.lang.RuntimeException
                 subscribe((e) -> System.out.println("Done without error"));
     }
+    @Test
+    void errorSignalStopsLaterItemsFromFlowingTest(){
+        Flux.just("first", "second").
+                concatWith(Flux.error(RuntimeException::new)).
+                concatWith(Flux.just("third"))
+                .subscribe(System.out::println, // prints first, second, An error happened
+                            (e) -> System.out.println("An error happened"),
+                            () -> System.out.println("Completed"));
+    }
 }
