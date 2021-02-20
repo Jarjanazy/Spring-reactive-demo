@@ -21,5 +21,33 @@ public class FluxTest {
                 verifyComplete(); // the actual subscription to the FLux
     }
 
+    @Test
+    void errorEventTest(){
+        Flux<String> fluxOfStringsAndError =
+                Flux.just("I", "am", "abdo").concatWith(Flux.error(RuntimeException::new));
+        StepVerifier.
+                create(fluxOfStringsAndError).
+                expectNext("I").
+                expectNext("am").
+                expectNext("abdo").
+                expectError(RuntimeException.class).
+                verify();
+    }
+
+    @Test
+    void errorEventWithMessageTest(){
+        Flux<String> fluxOfStringsAndError =
+                Flux.just("I", "am", "not","abdo").
+                        concatWith(Flux.error(() -> new RuntimeException("error!!!")));
+        StepVerifier.
+                create(fluxOfStringsAndError).
+                expectNext("I").
+                expectNext("am").
+                expectNext("not").
+                expectNext("abdo").
+                expectErrorMessage("error!!!").
+                verify();
+    }
+
 
 }
