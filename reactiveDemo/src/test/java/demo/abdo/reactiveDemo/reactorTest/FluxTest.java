@@ -2,7 +2,12 @@ package demo.abdo.reactiveDemo.reactorTest;
 
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FluxTest {
 
@@ -16,8 +21,7 @@ public class FluxTest {
         // subscribes to the FLux and handles the values emitted by it
         StepVerifier.
                 create(fluxOfStrings).
-                expectNext("nope").
-                expectNext("nada").
+                expectNext("nope", "nada").
                 verifyComplete(); // the actual subscription to the FLux
     }
 
@@ -27,9 +31,7 @@ public class FluxTest {
                 Flux.just("I", "am", "abdo").concatWith(Flux.error(RuntimeException::new));
         StepVerifier.
                 create(fluxOfStringsAndError).
-                expectNext("I").
-                expectNext("am").
-                expectNext("abdo").
+                expectNext("I", "am", "abdo").
                 expectError(RuntimeException.class).
                 verify();
     }
@@ -41,13 +43,17 @@ public class FluxTest {
                         concatWith(Flux.error(() -> new RuntimeException("error!!!")));
         StepVerifier.
                 create(fluxOfStringsAndError).
-                expectNext("I").
-                expectNext("am").
-                expectNext("not").
-                expectNext("abdo").
+                expectNext("I", "am" , "not", "abdo").
                 expectErrorMessage("error!!!").
                 verify();
     }
 
+    @Test
+    void verifyEmittedCountForFluxOfListsTest(){
+        Flux<List<String>> fluxOfLists =
+                Flux.just(Arrays.asList("1", "2"), Arrays.asList("3", "4"));
+
+        StepVerifier.create(fluxOfLists).expectNextCount(2).verifyComplete();
+    }
 
 }
