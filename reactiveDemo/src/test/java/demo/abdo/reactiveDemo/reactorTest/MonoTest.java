@@ -22,4 +22,20 @@ public class MonoTest {
                 expectError(RuntimeException.class).
                 verify();
     }
+
+    @Test
+    void whenMonoIsEmpty_getSwitchMono(){
+        Mono<String> emptyMono = Mono.empty();
+        Mono<String> switchMono = emptyMono.switchIfEmpty(Mono.just("test"));
+
+        StepVerifier.create(switchMono).expectNext("test").verifyComplete();
+    }
+
+    @Test
+    void whenMonoIsNotEmpty_getMono(){
+        Mono<String> emptyMono = Mono.just("original");
+        Mono<String> switchMono = emptyMono.switchIfEmpty(Mono.just("test"));
+
+        StepVerifier.create(switchMono).expectNext("original").verifyComplete();
+    }
 }
