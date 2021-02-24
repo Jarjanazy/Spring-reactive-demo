@@ -56,4 +56,11 @@ public class FluxTest {
         StepVerifier.create(fluxOfLists).expectNextCount(2).verifyComplete();
     }
 
+    @Test
+    void flatMapEffect(){
+        Flux<Mono<Integer>> fluxOfMonos = Flux.range(1, 3).map(Mono::just);
+        // flatMap subscribes to the Monos and get their Integer values into the Flux
+        Flux<Integer> fluxOfIntegers = Flux.range(1, 3).flatMap(Mono::just);
+    }
+
 }
